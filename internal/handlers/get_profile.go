@@ -11,16 +11,16 @@ import (
 )
 
 func GetProfile(e echo.Context) error {
-	username := e.QueryParams().Get("username")
+	email := e.QueryParams().Get("email")
 	user := model.UserProfile{}
-	if err := internal.DB.Where("username = ?", username).Last(&user).Error; err != nil {
+	if err := internal.DB.Where("email = ?", email).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return echo.NewHTTPError(http.StatusBadRequest, gorm.ErrRecordNotFound.Error())
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if token, err := pkg.NewJWT(model.MapArg{Key: "username", Value: user.ID}); err != nil {
+	if token, err := pkg.NewJWT(model.MapArg{Key: "id", Value: user.ID}); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	} else {
 		res := make(map[string]interface{})
