@@ -12,8 +12,8 @@ WORKDIR /app
 COPY --from=builder /app/main .
 RUN apk update && apk add bash
 COPY wait-for-it.sh .
+COPY .dev.env .
 RUN chmod +x wait-for-it.sh
-#COPY .dev.env .
 
 
 EXPOSE 9000

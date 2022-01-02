@@ -18,7 +18,9 @@ func CreateProfile(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	internal.DB.Create(&user)
+	if err := internal.DB.Create(&user).Error; err != nil {
+		return echo.NewHTTPError(http.StatusForbidden, err.Error())
+	}
 
-	return e.JSON(http.StatusOK, user)
+	return e.JSON(http.StatusOK, &user)
 }
