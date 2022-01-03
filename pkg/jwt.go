@@ -7,13 +7,13 @@ import (
 	"time"
 )
 
-func NewJWT(args ...model.MapArg) (string, error) {
+func NewJWT(expTime time.Duration, args ...model.MapArg) (string, error) {
 	claims := jwt.MapClaims{}
 	for i := 0; i < len(args); i++ {
 		claims[args[i].Key] = args[i].Value
 	}
 	claims["time"] = time.Now()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
-
+	claims["exp"] = time.Now().Add(expTime)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("SECRET")))
 }

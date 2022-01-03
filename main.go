@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
@@ -15,7 +14,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 )
 
 type CustomValidator struct {
@@ -34,7 +32,7 @@ func main() {
 	var err error
 	godotenv.Load(".dev.env")
 
-	dsn := fmt.Sprintf("host=db user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Kiev", os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"))
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Kiev", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DBNAME"))
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -51,8 +49,8 @@ func main() {
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	e.GET("", handlers.GetProfile)
-	e.POST("/", handlers.CreateProfile)
+	e.POST("/login", handlers.LoginIntoProfile)
+	e.POST("/register", handlers.CreateProfile)
 
 	go func() {
 		err := e.Start(":9000")
@@ -69,7 +67,4 @@ func main() {
 	sig := <-c
 	log.Println("Got signal:", sig)
 
-	// gracefully shutdown the server, waiting max 30 seconds for current operations to complete
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	e.Shutdown(ctx)
 }

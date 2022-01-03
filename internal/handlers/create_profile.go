@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 	"main/internal"
 	"main/internal/data/model"
 	"net/http"
@@ -17,6 +18,13 @@ func CreateProfile(e echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+
+	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), -1)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user.Password = string(password)
 
 	if err := internal.DB.Create(&user).Error; err != nil {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())

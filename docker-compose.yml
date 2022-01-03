@@ -17,6 +17,7 @@ services:
       - POSTGRES_PASSWORD=miha0904
       - POSTGRES_USER=chef
       - POSTGRES_DB=cook
+      - POSTGRES_HOST=db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", "--", "./main"]
     command: [ "/app/main" ]
 
