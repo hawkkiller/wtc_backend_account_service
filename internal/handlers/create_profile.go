@@ -30,5 +30,9 @@ func CreateProfile(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())
 	}
 
-	return e.JSON(http.StatusOK, &user)
+	json := make(map[string]interface{})
+
+	json["message"] = "Successfully authorized"
+
+	return e.JSON(http.StatusOK, json)
 }

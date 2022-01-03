@@ -11,6 +11,7 @@ import (
 	"log"
 	"main/internal"
 	"main/internal/handlers"
+	"main/pkg/middlewares"
 	"net/http"
 	"os"
 	"os/signal"
@@ -48,17 +49,16 @@ func main() {
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	l := e.Group("/login")
-	//l.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-	//	SigningKey:    os.Getenv("SECRET"),
-	//	SigningMethod: middleware.AlgorithmHS256,
-	//	TokenLookup:   "header:" + echo.HeaderAuthorization,
-	//}))
-	l.POST("", handlers.LoginIntoProfile)
+	d := e.Group("/data")
+	d.Use(middlewares.CheckJWT())
+	d.POST("", handlers.GetProfileData)
+
+	e.POST("/login", handlers.LoginIntoProfile)
+
 	e.POST("/register", handlers.CreateProfile)
 
 	go func() {
-		err := e.Start(":9001")
+		err := e.Start(":9000")
 		if err != nil {
 			log.Println(err)
 
