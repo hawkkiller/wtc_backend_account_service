@@ -45,16 +45,23 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	//e.Use(middleware.JWTWithConfig(middleware.JWTConfig{SigningKey: "mihael", TokenLookup: "header:" + echo.HeaderAuthorization}))
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	e.POST("/login", handlers.LoginIntoProfile)
+	l := e.Group("/login")
+	//l.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+	//	SigningKey:    os.Getenv("SECRET"),
+	//	SigningMethod: middleware.AlgorithmHS256,
+	//	TokenLookup:   "header:" + echo.HeaderAuthorization,
+	//}))
+	l.POST("", handlers.LoginIntoProfile)
 	e.POST("/register", handlers.CreateProfile)
 
 	go func() {
-		err := e.Start(":9000")
+		err := e.Start(":9001")
 		if err != nil {
+			log.Println(err)
+
 			os.Exit(1)
 		}
 	}()

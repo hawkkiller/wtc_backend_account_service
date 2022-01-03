@@ -9,6 +9,7 @@ import (
 	"main/internal/data/model"
 	"main/pkg"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -27,8 +28,8 @@ func LoginIntoProfile(e echo.Context) error {
 
 	} else {
 		if err := bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password)); err == nil {
-			accessToken, _ := pkg.NewJWT(time.Duration(24)*time.Hour, model.MapArg{Key: "id", Value: userDB.ID})
-			refreshToken, _ := pkg.NewJWT(time.Duration(24)*time.Hour*30, model.MapArg{Key: "id", Value: userDB.ID})
+			accessToken, _ := pkg.NewJWT(time.Duration(24)*time.Hour, strconv.Itoa(int(userDB.ID)))
+			refreshToken, _ := pkg.NewJWT(time.Duration(24)*time.Hour*30, strconv.Itoa(int(userDB.ID)))
 
 			res := make(map[string]interface{})
 			res["accessToken"] = accessToken
