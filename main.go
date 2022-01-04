@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	_ "github.com/rizalgowandy/go-swag-sample/docs/echosimple"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -29,6 +30,21 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
+// @title Echo Swagger Example API
+// @version 1.0
+// @description This is a sample server server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:3000
+// @BasePath /
+// @schemes http
 func main() {
 	var err error
 	godotenv.Load(".dev.env")
@@ -49,13 +65,13 @@ func main() {
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	d := e.Group("/data")
-	d.Use(middlewares.CheckJWT())
-	d.POST("", handlers.GetProfileData)
+	api := e.Group("/api/v1")
 
-	e.POST("/login", handlers.LoginIntoProfile)
+	api.POST("/data", handlers.GetProfileData, middlewares.CheckJWT())
 
-	e.POST("/register", handlers.CreateProfile)
+	api.POST("/login", handlers.LoginIntoProfile)
+
+	api.POST("/register", handlers.CreateProfile)
 
 	go func() {
 		err := e.Start(":9000")

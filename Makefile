@@ -7,3 +7,7 @@ bld:
 
 up:
 	docker-compose up
+
+run:
+	swagger generate spec -o ./swagger.yaml --scan-models
+	go run main.go

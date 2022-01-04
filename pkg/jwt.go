@@ -17,6 +17,8 @@ func NewJWT(expTime time.Duration, id string) (string, error) {
 }
 
 // GetTokens is a function that returns both refresh and access tokens
+//
+// ACCESS, REFRESH
 func GetTokens(id uint) (string, string) {
 	accessToken, _ := NewJWT(time.Duration(24)*time.Hour, strconv.Itoa(int(id)))
 	refreshToken, _ := NewJWT(time.Duration(24)*time.Hour*30, strconv.Itoa(int(id)))
