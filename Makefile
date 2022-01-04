@@ -9,5 +9,5 @@ up:
 	docker-compose up
 
 run:
-	swagger generate spec -o ./swagger.yaml --scan-models
+	swag init -g main.go --output docs/wtc
 	go run main.go

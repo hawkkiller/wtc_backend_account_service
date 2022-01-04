@@ -20,18 +20,87 @@ var doc = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+            "email": "miskadl09@gmail.com"
         },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/register": {
+            "post": {
+                "description": "register new profile to be able to use WTC.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "account"
+                ],
+                "summary": "register new profile in WTC system",
+                "parameters": [
+                    {
+                        "description": "hello string",
+                        "name": "CreateProfileModel",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/model.CreateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.RegProfileResponseOK"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.RegProfileResponseFailure"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.CreateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegProfileResponseFailure": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.\ne.g. \"No records were found\"",
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegProfileResponseOK": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.\ne.g. \"Successfully registered\"",
+                    "type": "string"
+                }
+            }
+        }
+    }
 }`
 
 type swaggerInfo struct {
@@ -45,12 +114,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "1.0",
-	Host:        "localhost:3000",
-	BasePath:    "/",
+	Version:     "0.4+040120221154",
+	Host:        "localhost:9000",
+	BasePath:    "/api/v1",
 	Schemes:     []string{"http"},
-	Title:       "Echo Swagger Example API",
-	Description: "This is a sample server server.",
+	Title:       "WTC ACCOUNT SERVICE",
+	Description: "Account service for WTC.",
 }
 
 type s struct{}

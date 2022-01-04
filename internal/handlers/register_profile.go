@@ -8,7 +8,17 @@ import (
 	"net/http"
 )
 
-func CreateProfile(e echo.Context) error {
+// RegisterProfile godoc
+// @Summary register new profile in WTC system
+// @Description register new profile to be able to use WTC.
+// @Tags account
+// @Accept json
+// @Param CreateProfileModel body model.RegProfileRequest false "hello string"
+// @Produce json
+// @Success 200 {object} model.RegProfileResponseOK
+// @Failure 400 {object} model.RegProfileResponseFailure
+// @Router /register [post]
+func RegisterProfile(e echo.Context) error {
 	user := new(model.UserProfile)
 	if err := e.Bind(user); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -30,9 +40,5 @@ func CreateProfile(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())
 	}
 
-	json := make(map[string]interface{})
-
-	json["message"] = "Successfully authorized"
-
-	return e.JSON(http.StatusOK, json)
+	return e.JSON(http.StatusOK, model.RegProfileResponseOK{Message: "Successfully registered"})
 }

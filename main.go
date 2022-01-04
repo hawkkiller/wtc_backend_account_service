@@ -6,10 +6,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	_ "github.com/rizalgowandy/go-swag-sample/docs/echosimple"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	_ "main/docs/wtc"
 	"main/internal"
 	"main/internal/handlers"
 	"main/pkg/middlewares"
@@ -30,20 +31,16 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
-// @title Echo Swagger Example API
-// @version 1.0
-// @description This is a sample server server.
+// @title WTC ACCOUNT SERVICE
+// @version 0.4+040120221154
+// @description Account service for WTC.
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
+// @contact.email miskadl09@gmail.com
 
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host localhost:3000
-// @BasePath /
+// @host localhost:9000
+// @BasePath /api/v1
 // @schemes http
 func main() {
 	var err error
@@ -67,11 +64,13 @@ func main() {
 
 	api := e.Group("/api/v1")
 
+	api.GET("/swagger/*", echoSwagger.WrapHandler)
+
 	api.POST("/data", handlers.GetProfileData, middlewares.CheckJWT())
 
 	api.POST("/login", handlers.LoginIntoProfile)
 
-	api.POST("/register", handlers.CreateProfile)
+	api.POST("/register", handlers.RegisterProfile)
 
 	go func() {
 		err := e.Start(":9000")
