@@ -1,0 +1,65 @@
+basePath: /api/v1
+definitions:
+  model.CreateProfileRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  model.RegProfileResponseFailure:
+    properties:
+      message:
+        description: |-
+          A response returned from the server.
+          e.g. "No records were found"
+        type: string
+    type: object
+  model.RegProfileResponseOK:
+    properties:
+      message:
+        description: |-
+          A response returned from the server.
+          e.g. "Successfully registered"
+        type: string
+    type: object
+host: localhost:9000
+info:
+  contact:
+    email: miskadl09@gmail.com
+    name: API Support
+  description: Account service for WTC.
+  termsOfService: http://swagger.io/terms/
+  title: WTC ACCOUNT SERVICE
+  version: 0.4+040120221154
+paths:
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: register new profile to be able to use WTC.
+      parameters:
+      - description: hello string
+        in: body
+        name: CreateProfileModel
+        schema:
+          $ref: '#/definitions/model.CreateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RegProfileResponseOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.RegProfileResponseFailure'
+      summary: register new profile in WTC system
+      tags:
+      - account
+schemes:
+- http
+swagger: "2.0"

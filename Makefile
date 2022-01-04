@@ -7,3 +7,7 @@ bld:
 
 up:
 	docker-compose up
+
+run:
+	swag init -g main.go --output docs/wtc
+	go run main.go

@@ -6,11 +6,14 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	_ "main/docs/wtc"
 	"main/internal"
 	"main/internal/handlers"
+	"main/pkg/middlewares"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,6 +31,17 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	return nil
 }
 
+// @title WTC ACCOUNT SERVICE
+// @version 0.4+040120221154
+// @description Account service for WTC.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email miskadl09@gmail.com
+
+// @host localhost:9000
+// @BasePath /api/v1
+// @schemes http
 func main() {
 	var err error
 	godotenv.Load(".dev.env")
@@ -48,17 +62,18 @@ func main() {
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
-	l := e.Group("/login")
-	//l.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-	//	SigningKey:    os.Getenv("SECRET"),
-	//	SigningMethod: middleware.AlgorithmHS256,
-	//	TokenLookup:   "header:" + echo.HeaderAuthorization,
-	//}))
-	l.POST("", handlers.LoginIntoProfile)
-	e.POST("/register", handlers.CreateProfile)
+	api := e.Group("/api/v1")
+
+	api.GET("/swagger/*", echoSwagger.WrapHandler)
+
+	api.POST("/data", handlers.GetProfileData, middlewares.CheckJWT())
+
+	api.POST("/login", handlers.LoginIntoProfile)
+
+	api.POST("/register", handlers.RegisterProfile)
 
 	go func() {
-		err := e.Start(":9001")
+		err := e.Start(":9000")
 		if err != nil {
 			log.Println(err)
 
