@@ -11,6 +11,16 @@ import (
 	"net/http"
 )
 
+// LoginIntoProfile godoc
+// @Summary login into an account
+// @Description
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param LogProfileModel body model.LogProfileRequest true "user log model"
+// @Success 200 {object} model.LogProfileResponseOK
+// @Failure 400 {object} model.LogProfileResponseBR
+// @Router /login [post]
 func LoginIntoProfile(e echo.Context) error {
 	user := new(model.UserProfile)
 	userDB := new(model.UserProfile)
@@ -39,5 +49,4 @@ func LoginIntoProfile(e echo.Context) error {
 		}
 
 	}
-
 }

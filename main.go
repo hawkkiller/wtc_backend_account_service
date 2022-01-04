@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	"github.com/happierall/l"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -57,7 +58,7 @@ func main() {
 	internal.SetDB(db)
 
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.Use(middlewares.Logger())
 	e.Use(middleware.Recover())
 
 	e.Validator = &CustomValidator{validator: validator.New()}
@@ -66,7 +67,9 @@ func main() {
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	api.POST("/data", handlers.GetProfileData, middlewares.CheckJWT())
+	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT())
+
+	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT())
 
 	api.POST("/login", handlers.LoginIntoProfile)
 
@@ -75,7 +78,7 @@ func main() {
 	go func() {
 		err := e.Start(":9000")
 		if err != nil {
-			log.Println(err)
+			l.Print(err)
 
 			os.Exit(1)
 		}

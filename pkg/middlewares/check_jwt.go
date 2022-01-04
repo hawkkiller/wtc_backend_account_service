@@ -3,6 +3,7 @@ package middlewares
 import (
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -13,7 +14,11 @@ func CheckJWT() echo.MiddlewareFunc {
 			var id interface{}
 			req := c.Request()
 			tokenReq := req.Header.Get("Authorization")
-			t := strings.Split(tokenReq, " ")[1]
+			split := strings.Split(tokenReq, " ")
+			if len(split) != 2 {
+				return echo.NewHTTPError(http.StatusBadRequest, "Maybe token is not Bearer token or it is empty")
+			}
+			t := split[1]
 			claims := jwt.MapClaims{}
 			_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
 				return []byte(os.Getenv("SECRET")), nil
