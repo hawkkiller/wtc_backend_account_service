@@ -27,6 +27,83 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/data": {
+            "get": {
+                "description": "get information from Bearer JWT Access Token(oAuth)",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "get profile information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "H.Authorization: Bearer ` + "`" + `token` + "`" + `",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.GetProfileInfoResponseOK"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.GetProfileInfoResponseBR"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "login into an account",
+                "parameters": [
+                    {
+                        "description": "user log model",
+                        "name": "LogProfileModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LogProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LogProfileResponseOK"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.LogProfileResponseBR"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "register new profile to be able to use WTC.",
@@ -37,16 +114,17 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "account"
+                    "Account"
                 ],
                 "summary": "register new profile in WTC system",
                 "parameters": [
                     {
-                        "description": "hello string",
+                        "description": "user reg model",
                         "name": "CreateProfileModel",
                         "in": "body",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CreateProfileRequest"
+                            "$ref": "#/definitions/model.RegProfileRequest"
                         }
                     }
                 ],
@@ -60,7 +138,53 @@ var doc = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/model.RegProfileResponseFailure"
+                            "$ref": "#/definitions/model.RegProfileResponseBR"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/model.RegProfileResponseFN"
+                        }
+                    }
+                }
+            }
+        },
+        "/update": {
+            "get": {
+                "description": "update profile by passing access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "update profile",
+                "parameters": [
+                    {
+                        "description": "update profile model",
+                        "name": "UpdProfileModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileResponseOK"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileResponseBR"
                         }
                     }
                 }
@@ -68,13 +192,22 @@ var doc = `{
         }
     },
     "definitions": {
-        "model.CreateProfileRequest": {
+        "model.GetProfileInfoResponseBR": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.",
+                    "type": "string"
+                }
+            }
+        },
+        "model.GetProfileInfoResponseOK": {
             "type": "object",
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "password": {
+                "sex": {
                     "type": "string"
                 },
                 "username": {
@@ -82,11 +215,72 @@ var doc = `{
                 }
             }
         },
-        "model.RegProfileResponseFailure": {
+        "model.LogProfileRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "user's email",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "user's password",
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogProfileResponseBR": {
             "type": "object",
             "properties": {
                 "message": {
-                    "description": "A response returned from the server.\ne.g. \"No records were found\"",
+                    "description": "A response returned from the server.\ne.g. \"No records were found\".",
+                    "type": "string"
+                }
+            }
+        },
+        "model.LogProfileResponseOK": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "Access token to auth API requests.",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "description": "Refresh token to recreate access token.",
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegProfileRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "user's email",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "user's password",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "user's username",
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegProfileResponseBR": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.",
+                    "type": "string"
+                }
+            }
+        },
+        "model.RegProfileResponseFN": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.\ne.g. \"ERROR: duplicate key value violates unique constraint\".",
                     "type": "string"
                 }
             }
@@ -95,7 +289,46 @@ var doc = `{
             "type": "object",
             "properties": {
                 "message": {
-                    "description": "A response returned from the server.\ne.g. \"Successfully registered\"",
+                    "description": "A response returned from the server.\ne.g. \"Successfully registered\".",
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateProfileResponseBR": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.",
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateProfileResponseOK": {
+            "type": "object",
+            "properties": {
+                "affected_rows": {
+                    "description": "How many rows changed",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "A response returned from the server.",
                     "type": "string"
                 }
             }
@@ -114,7 +347,7 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "0.4+040120221154",
+	Version:     "0.4+05-01-2022-22:22",
 	Host:        "localhost:9000",
 	BasePath:    "/api/v1",
 	Schemes:     []string{"http"},

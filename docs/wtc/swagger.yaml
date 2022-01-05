@@ -1,20 +1,70 @@
 basePath: /api/v1
 definitions:
-  model.CreateProfileRequest:
+  model.GetProfileInfoResponseBR:
+    properties:
+      message:
+        description: A response returned from the server.
+        type: string
+    type: object
+  model.GetProfileInfoResponseOK:
     properties:
       email:
         type: string
-      password:
+      sex:
         type: string
       username:
         type: string
     type: object
-  model.RegProfileResponseFailure:
+  model.LogProfileRequest:
+    properties:
+      email:
+        description: user's email
+        type: string
+      password:
+        description: user's password
+        type: string
+    type: object
+  model.LogProfileResponseBR:
     properties:
       message:
         description: |-
           A response returned from the server.
-          e.g. "No records were found"
+          e.g. "No records were found".
+        type: string
+    type: object
+  model.LogProfileResponseOK:
+    properties:
+      access_token:
+        description: Access token to auth API requests.
+        type: string
+      refresh_token:
+        description: Refresh token to recreate access token.
+        type: string
+    type: object
+  model.RegProfileRequest:
+    properties:
+      email:
+        description: user's email
+        type: string
+      password:
+        description: user's password
+        type: string
+      username:
+        description: user's username
+        type: string
+    type: object
+  model.RegProfileResponseBR:
+    properties:
+      message:
+        description: A response returned from the server.
+        type: string
+    type: object
+  model.RegProfileResponseFN:
+    properties:
+      message:
+        description: |-
+          A response returned from the server.
+          e.g. "ERROR: duplicate key value violates unique constraint".
         type: string
     type: object
   model.RegProfileResponseOK:
@@ -22,7 +72,33 @@ definitions:
       message:
         description: |-
           A response returned from the server.
-          e.g. "Successfully registered"
+          e.g. "Successfully registered".
+        type: string
+    type: object
+  model.UpdateProfileRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      sex:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UpdateProfileResponseBR:
+    properties:
+      message:
+        description: A response returned from the server.
+        type: string
+    type: object
+  model.UpdateProfileResponseOK:
+    properties:
+      affected_rows:
+        description: How many rows changed
+        type: integer
+      message:
+        description: A response returned from the server.
         type: string
     type: object
 host: localhost:9000
@@ -33,19 +109,70 @@ info:
   description: Account service for WTC.
   termsOfService: http://swagger.io/terms/
   title: WTC ACCOUNT SERVICE
-  version: 0.4+040120221154
+  version: 0.4+05-01-2022-22:22
 paths:
+  /data:
+    get:
+      consumes:
+      - '*/*'
+      description: get information from Bearer JWT Access Token(oAuth)
+      parameters:
+      - description: 'H.Authorization: Bearer `token`'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GetProfileInfoResponseOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GetProfileInfoResponseBR'
+      summary: get profile information
+      tags:
+      - Account
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user log model
+        in: body
+        name: LogProfileModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.LogProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LogProfileResponseOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.LogProfileResponseBR'
+      summary: login into an account
+      tags:
+      - Account
   /register:
     post:
       consumes:
       - application/json
       description: register new profile to be able to use WTC.
       parameters:
-      - description: hello string
+      - description: user reg model
         in: body
         name: CreateProfileModel
+        required: true
         schema:
-          $ref: '#/definitions/model.CreateProfileRequest'
+          $ref: '#/definitions/model.RegProfileRequest'
       produces:
       - application/json
       responses:
@@ -56,10 +183,40 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.RegProfileResponseFailure'
+            $ref: '#/definitions/model.RegProfileResponseBR'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/model.RegProfileResponseFN'
       summary: register new profile in WTC system
       tags:
-      - account
+      - Account
+  /update:
+    get:
+      consumes:
+      - application/json
+      description: update profile by passing access token
+      parameters:
+      - description: update profile model
+        in: body
+        name: UpdProfileModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UpdateProfileResponseOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.UpdateProfileResponseBR'
+      summary: update profile
+      tags:
+      - Account
 schemes:
 - http
 swagger: "2.0"

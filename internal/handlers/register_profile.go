@@ -11,12 +11,13 @@ import (
 // RegisterProfile godoc
 // @Summary register new profile in WTC system
 // @Description register new profile to be able to use WTC.
-// @Tags account
+// @Tags Account
 // @Accept json
-// @Param CreateProfileModel body model.RegProfileRequest false "hello string"
 // @Produce json
+// @Param CreateProfileModel body model.RegProfileRequest true "user reg model"
 // @Success 200 {object} model.RegProfileResponseOK
-// @Failure 400 {object} model.RegProfileResponseFailure
+// @Failure 400 {object} model.RegProfileResponseBR
+// @Failure 403 {object} model.RegProfileResponseFN
 // @Router /register [post]
 func RegisterProfile(e echo.Context) error {
 	user := new(model.UserProfile)
@@ -29,7 +30,7 @@ func RegisterProfile(e echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), -1)
+	password, err := bcrypt.GenerateFromPassword([]byte(user.Password), 2)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}

@@ -11,6 +11,16 @@ import (
 	"net/http"
 )
 
+// LoginIntoProfile godoc
+// @Summary login into an account
+// @Description
+// @Tags Account
+// @Accept json
+// @Produce json
+// @Param LogProfileModel body model.LogProfileRequest true "user log model"
+// @Success 200 {object} model.LogProfileResponseOK
+// @Failure 400 {object} model.LogProfileResponseBR
+// @Router /login [post]
 func LoginIntoProfile(e echo.Context) error {
 	user := new(model.UserProfile)
 	userDB := new(model.UserProfile)
@@ -27,17 +37,16 @@ func LoginIntoProfile(e echo.Context) error {
 	} else {
 		if err := bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password)); err == nil {
 			accessToken, refreshToken := pkg.GetTokens(userDB.ID)
-			res := make(map[string]interface{})
-			res["accessToken"] = accessToken
-			res["refreshToken"] = refreshToken
+			res := model.LogProfileResponseOK{
+				AccessToken:  accessToken,
+				RefreshToken: refreshToken,
+			}
 
 			return e.JSON(http.StatusOK, res)
 		} else {
-			res := make(map[string]interface{})
-			res["message"] = "Password is not correct."
-			return e.JSON(http.StatusOK, res)
+			res := model.LogProfileResponseBR{Message: "Password is not correct."}
+			return e.JSON(http.StatusBadRequest, res)
 		}
 
 	}
-
 }
