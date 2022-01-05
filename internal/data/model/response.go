@@ -40,3 +40,15 @@ type GetProfileInfoResponseBR struct {
 	// A response returned from the server.
 	Message string `json:"message"`
 }
+
+type UpdateProfileResponseOK struct {
+	// A response returned from the server.
+	Message string `json:"message"`
+	// How many rows changed
+	RowsAffected int64 `json:"affected_rows"`
+}
+
+type UpdateProfileResponseBR struct {
+	// A response returned from the server.
+	Message string `json:"message"`
+}

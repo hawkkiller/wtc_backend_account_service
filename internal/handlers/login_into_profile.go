@@ -37,15 +37,15 @@ func LoginIntoProfile(e echo.Context) error {
 	} else {
 		if err := bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password)); err == nil {
 			accessToken, refreshToken := pkg.GetTokens(userDB.ID)
-			res := make(map[string]interface{})
-			res["accessToken"] = accessToken
-			res["refreshToken"] = refreshToken
+			res := model.LogProfileResponseOK{
+				AccessToken:  accessToken,
+				RefreshToken: refreshToken,
+			}
 
 			return e.JSON(http.StatusOK, res)
 		} else {
-			res := make(map[string]interface{})
-			res["message"] = "Password is not correct."
-			return e.JSON(http.StatusOK, res)
+			res := model.LogProfileResponseBR{Message: "Password is not correct."}
+			return e.JSON(http.StatusBadRequest, res)
 		}
 
 	}

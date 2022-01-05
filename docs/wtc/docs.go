@@ -149,6 +149,46 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/update": {
+            "get": {
+                "description": "update profile by passing access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Account"
+                ],
+                "summary": "update profile",
+                "parameters": [
+                    {
+                        "description": "update profile model",
+                        "name": "UpdProfileModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileResponseOK"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.UpdateProfileResponseBR"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -253,6 +293,45 @@ var doc = `{
                     "type": "string"
                 }
             }
+        },
+        "model.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateProfileResponseBR": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "description": "A response returned from the server.",
+                    "type": "string"
+                }
+            }
+        },
+        "model.UpdateProfileResponseOK": {
+            "type": "object",
+            "properties": {
+                "affected_rows": {
+                    "description": "How many rows changed",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "A response returned from the server.",
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -268,7 +347,7 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "0.4+040120221154",
+	Version:     "0.4+05-01-2022-22:22",
 	Host:        "localhost:9000",
 	BasePath:    "/api/v1",
 	Schemes:     []string{"http"},

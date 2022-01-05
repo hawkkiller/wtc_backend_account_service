@@ -33,7 +33,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 // @title WTC ACCOUNT SERVICE
-// @version 0.4+040120221154
+// @version 0.8+05-01-2022-22:22
 // @description Account service for WTC.
 // @termsOfService http://swagger.io/terms/
 

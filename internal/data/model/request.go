@@ -15,3 +15,10 @@ type LogProfileRequest struct {
 	// user's password
 	Password string `json:"password"`
 }
+
+type UpdateProfileRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Sex      string `json:"sex"`
+}

@@ -75,6 +75,32 @@ definitions:
           e.g. "Successfully registered".
         type: string
     type: object
+  model.UpdateProfileRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      sex:
+        type: string
+      username:
+        type: string
+    type: object
+  model.UpdateProfileResponseBR:
+    properties:
+      message:
+        description: A response returned from the server.
+        type: string
+    type: object
+  model.UpdateProfileResponseOK:
+    properties:
+      affected_rows:
+        description: How many rows changed
+        type: integer
+      message:
+        description: A response returned from the server.
+        type: string
+    type: object
 host: localhost:9000
 info:
   contact:
@@ -83,7 +109,7 @@ info:
   description: Account service for WTC.
   termsOfService: http://swagger.io/terms/
   title: WTC ACCOUNT SERVICE
-  version: 0.4+040120221154
+  version: 0.4+05-01-2022-22:22
 paths:
   /data:
     get:
@@ -163,6 +189,32 @@ paths:
           schema:
             $ref: '#/definitions/model.RegProfileResponseFN'
       summary: register new profile in WTC system
+      tags:
+      - Account
+  /update:
+    get:
+      consumes:
+      - application/json
+      description: update profile by passing access token
+      parameters:
+      - description: update profile model
+        in: body
+        name: UpdProfileModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UpdateProfileResponseOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.UpdateProfileResponseBR'
+      summary: update profile
       tags:
       - Account
 schemes:
