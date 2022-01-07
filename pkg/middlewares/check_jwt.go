@@ -8,13 +8,14 @@ import (
 	"strings"
 )
 
-func CheckJWT() echo.MiddlewareFunc {
+func CheckJWT(h string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
 			var id interface{}
 			req := c.Request()
-			tokenReq := req.Header.Get("Authorization")
+			tokenReq := req.Header.Get(h)
 			split := strings.Split(tokenReq, " ")
+
 			if len(split) != 2 {
 				return echo.NewHTTPError(http.StatusBadRequest, "Maybe token is not Bearer token or it is empty")
 			}

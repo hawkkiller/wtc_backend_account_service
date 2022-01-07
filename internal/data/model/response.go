@@ -52,3 +52,20 @@ type UpdateProfileResponseBR struct {
 	// A response returned from the server.
 	Message string `json:"message"`
 }
+
+type ReAuthResponseBR struct {
+	// If refresh is not valid
+	Message string `json:"message"`
+}
+
+type ReAuthResponseFN struct {
+	// If refresh is not valid
+	Message string `json:"message"`
+}
+
+type ReAuthResponseOK struct {
+	// Access token to auth API requests.
+	AccessToken string `json:"access_token"`
+	// Refresh token to recreate access token.
+	RefreshToken string `json:"refresh_token"`
+}

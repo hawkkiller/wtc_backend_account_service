@@ -68,9 +68,11 @@ func main() {
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT())
+	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT("Authorization"))
 
-	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT())
+	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT("Authorization"))
+
+	api.GET("/reauth", handlers.ReAuth, middlewares.CheckJWT("Refresh"))
 
 	api.POST("/login", handlers.LoginIntoProfile)
 

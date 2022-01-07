@@ -14,6 +14,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param UpdProfileModel body model.UpdateProfileRequest true "update profile model"
+// @Param Authorization header string true "H.Authorization: Bearer `token`"
 // @Success 200 {object} model.UpdateProfileResponseOK
 // @Failure 400 {object} model.UpdateProfileResponseBR
 // @Router /update [get]
