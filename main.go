@@ -60,6 +60,7 @@ func main() {
 	e := echo.New()
 	e.Use(middlewares.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 

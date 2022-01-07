@@ -21,12 +21,19 @@ func CheckJWT() echo.MiddlewareFunc {
 			t := split[1]
 			claims := jwt.MapClaims{}
 			_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
-				return []byte(os.Getenv("SECRET")), nil
+				if claims, ok := token.Claims.(*jwt.MapClaims); ok && claims.Valid() == nil {
+					return []byte(os.Getenv("SECRET")), nil
+				} else {
+					return nil, echo.ErrForbidden
+				}
 			})
 			if err != nil {
-				return err
+				return echo.NewHTTPError(http.StatusForbidden, "Token is expired or invalid")
 			}
 
+			if v := claims.Valid(); v != nil {
+				return echo.ErrForbidden
+			}
 			for key, val := range claims {
 				if key == "jti" {
 					id = val
