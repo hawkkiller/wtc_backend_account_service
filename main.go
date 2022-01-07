@@ -33,7 +33,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 // @title WTC ACCOUNT SERVICE
-// @version 0.8+05-01-2022-22:22
+// @version 0.8+07-01-2022-22:30
 // @description Account service for WTC.
 // @termsOfService http://swagger.io/terms/
 
@@ -60,6 +60,7 @@ func main() {
 	e := echo.New()
 	e.Use(middlewares.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
@@ -67,9 +68,11 @@ func main() {
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT())
+	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT("Authorization"))
 
-	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT())
+	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT("Authorization"))
+
+	api.GET("/reauth", handlers.ReAuth, middlewares.CheckJWT("Refresh"))
 
 	api.POST("/login", handlers.LoginIntoProfile)
 
