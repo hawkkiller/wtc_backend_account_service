@@ -18,7 +18,7 @@ services:
       - POSTGRES_USER=chef
       - POSTGRES_DB=cook
       - POSTGRES_HOST=db
-    entrypoint: ["/app/wait-for-it.sh", "db:5432", "--", "./main"]
+    entrypoint: ["/app/wait-for-it.sh", "db:5430", "--", "./main"]
     command: [ "/app/main" ]
 
   db:
@@ -37,6 +37,6 @@ services:
       - POSTGRES_USER=chef
       - POSTGRES_DB=cook
     ports:
-      - "5432:5432"
+      - "5430:5430"
 networks:
   default:
