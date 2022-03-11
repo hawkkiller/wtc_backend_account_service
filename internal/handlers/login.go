@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-// LoginIntoProfile godoc
+// Login godoc
 // @Summary login into an account
 // @Description
 // @Tags Account
@@ -21,7 +21,7 @@ import (
 // @Success 200 {object} model.LogProfileResponseOK
 // @Failure 400 {object} model.LogProfileResponseBR
 // @Router /login [post]
-func LoginIntoProfile(e echo.Context) error {
+func Login(e echo.Context) error {
 	user := new(model.UserProfile)
 	userDB := new(model.UserProfile)
 	if err := e.Bind(user); err != nil {

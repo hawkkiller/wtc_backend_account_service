@@ -11,16 +11,20 @@ import (
 func CheckJWT(h string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) (err error) {
+
 			var id interface{}
 			req := c.Request()
+
 			tokenReq := req.Header.Get(h)
 			split := strings.Split(tokenReq, " ")
 
 			if len(split) != 2 {
 				return echo.NewHTTPError(http.StatusBadRequest, "Maybe token is not Bearer token or it is empty")
 			}
+
 			t := split[1]
 			claims := jwt.MapClaims{}
+
 			_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
 				if claims, ok := token.Claims.(*jwt.MapClaims); ok && claims.Valid() == nil {
 					return []byte(os.Getenv("SECRET")), nil
@@ -28,6 +32,7 @@ func CheckJWT(h string) echo.MiddlewareFunc {
 					return nil, echo.ErrForbidden
 				}
 			})
+
 			if err != nil {
 				return echo.NewHTTPError(http.StatusForbidden, "Token is expired or invalid")
 			}
@@ -35,11 +40,8 @@ func CheckJWT(h string) echo.MiddlewareFunc {
 			if v := claims.Valid(); v != nil {
 				return echo.ErrForbidden
 			}
-			for key, val := range claims {
-				if key == "jti" {
-					id = val
-				}
-			}
+
+			id = claims["jti"]
 
 			if id != nil {
 				c.Set("id", id)

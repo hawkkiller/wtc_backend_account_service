@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func NewJWT(expTime time.Duration, id string) (string, error) {
+func newJWT(expTime time.Duration, id string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(expTime).Unix(),
 		IssuedAt:  time.Now().Unix(),
@@ -20,9 +20,8 @@ func NewJWT(expTime time.Duration, id string) (string, error) {
 //
 // ACCESS, REFRESH
 func GetTokens(id uint) (string, string) {
-	accessToken, _ := NewJWT(time.Duration(24)*time.Hour, strconv.Itoa(int(id)))
-	refreshToken, _ := NewJWT(time.Duration(24)*time.Hour*30, strconv.Itoa(int(id)))
+	accessToken, _ := newJWT(time.Duration(24)*time.Hour, strconv.Itoa(int(id)))
+	refreshToken, _ := newJWT(time.Duration(24)*time.Hour*30, strconv.Itoa(int(id)))
 
 	return accessToken, refreshToken
-
 }

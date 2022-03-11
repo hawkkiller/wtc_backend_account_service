@@ -45,9 +45,12 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 // @schemes http
 func main() {
 	var err error
-	godotenv.Load(".dev.env")
+	err = godotenv.Load(".dev.env")
+	if err != nil {
+		log.Fatalf("Variable environment not found")
+	}
 
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Kiev", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DBNAME"))
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DBNAME"))
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -60,7 +63,6 @@ func main() {
 	e := echo.New()
 	e.Use(middlewares.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
@@ -72,11 +74,11 @@ func main() {
 
 	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT("Authorization"))
 
-	api.GET("/reauth", handlers.ReAuth, middlewares.CheckJWT("Refresh"))
+	api.GET("/refresh", handlers.Refresh, middlewares.CheckJWT("Refresh"))
 
-	api.POST("/login", handlers.LoginIntoProfile)
+	api.POST("/login", handlers.Login)
 
-	api.POST("/register", handlers.RegisterProfile)
+	api.POST("/register", handlers.Register)
 
 	go func() {
 		err := e.Start(":9000")
