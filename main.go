@@ -13,7 +13,7 @@ import (
 	"log"
 	_ "main/docs/wtc"
 	"main/internal"
-	"main/internal/handlers"
+	"main/internal/handlers/user"
 	"main/pkg/middlewares"
 	"net/http"
 	"os"
@@ -70,15 +70,15 @@ func main() {
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT("Authorization"))
+	api.GET("/data", user.GetProfileData, middlewares.CheckJWT("Authorization"))
 
-	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT("Authorization"))
+	api.PUT("/update", user.UpdateProfile, middlewares.CheckJWT("Authorization"))
 
-	api.GET("/refresh", handlers.Refresh, middlewares.CheckJWT("Refresh"))
+	api.GET("/refresh", user.Refresh, middlewares.CheckJWT("Refresh"))
 
-	api.POST("/login", handlers.Login)
+	api.POST("/login", user.Login)
 
-	api.POST("/register", handlers.Register)
+	api.POST("/register", user.Register)
 
 	go func() {
 		err := e.Start(":9000")
