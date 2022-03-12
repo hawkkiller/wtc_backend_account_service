@@ -19,6 +19,5 @@ COPY wait-for-it.sh .
 COPY .dev.env .
 RUN chmod +x wait-for-it.sh
 
-
 EXPOSE 9000
 CMD ["./main"]
