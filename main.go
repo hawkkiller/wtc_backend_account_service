@@ -83,7 +83,7 @@ func main() {
 	api.POST("/register", user.Register)
 
 	go func() {
-		err := e.Start(os.Getenv("PORT"))
+		err := e.Start(fmt.Sprintf(":%s", os.Getenv("PORT")))
 		if err != nil {
 			l.Print(err)
 
