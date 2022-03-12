@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 func CheckJWT(h string) echo.MiddlewareFunc {
@@ -32,6 +33,9 @@ func CheckJWT(h string) echo.MiddlewareFunc {
 					return nil, echo.ErrForbidden
 				}
 			})
+			if int64(claims["exp"].(float64)) < time.Now().Add(time.Hour).Unix() && h == "Refresh" {
+				return echo.NewHTTPError(http.StatusForbidden, "Token is not refresh")
+			}
 
 			if err != nil {
 				return echo.NewHTTPError(http.StatusForbidden, "Token is expired or invalid")
