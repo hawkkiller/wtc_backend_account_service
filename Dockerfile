@@ -17,6 +17,7 @@ RUN apk update && apk add bash
 
 COPY wait-for-it.sh .
 COPY .dev.env .
+COPY what-to-cook-343908-75e2ee10fc50.json .
 RUN chmod +x wait-for-it.sh
 
 EXPOSE 9000
