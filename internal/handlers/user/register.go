@@ -1,4 +1,4 @@
-package handlers
+package user
 
 import (
 	"github.com/labstack/echo/v4"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// RegisterProfile godoc
+// Register godoc
 // @Summary register new profile in WTC system
 // @Description register new profile to be able to use WTC.
 // @Tags Account
@@ -19,7 +19,7 @@ import (
 // @Failure 400 {object} model.RegProfileResponseBR
 // @Failure 403 {object} model.RegProfileResponseFN
 // @Router /register [post]
-func RegisterProfile(e echo.Context) error {
+func Register(e echo.Context) error {
 	user := new(model.UserProfile)
 	if err := e.Bind(user); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())

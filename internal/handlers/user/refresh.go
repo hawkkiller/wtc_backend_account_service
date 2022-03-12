@@ -1,4 +1,4 @@
-package handlers
+package user
 
 import (
 	"github.com/labstack/echo/v4"
@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// ReAuth godoc
+// Refresh godoc
 // @Summary create new access token using refresh token
 // @Description pass refresh token to header `Refresh`
 // @Param Refresh header string true "refresh token"
@@ -18,8 +18,8 @@ import (
 // @Success 200 {object} model.ReAuthResponseOK
 // @Failure 400 {object} model.ReAuthResponseBR
 // @Failure 403 {object} model.ReAuthResponseBR
-// @Router /reauth [get]
-func ReAuth(e echo.Context) error {
+// @Router /refresh [get]
+func Refresh(e echo.Context) error {
 	id, err := strconv.Atoi(e.Get("id").(string))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusForbidden, err.Error())

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
 	"github.com/go-playground/validator/v10"
 	"github.com/happierall/l"
 	"github.com/joho/godotenv"
@@ -13,7 +14,7 @@ import (
 	"log"
 	_ "main/docs/wtc"
 	"main/internal"
-	"main/internal/handlers"
+	"main/internal/handlers/user"
 	"main/pkg/middlewares"
 	"net/http"
 	"os"
@@ -45,10 +46,14 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 // @schemes http
 func main() {
 	var err error
-	godotenv.Load(".dev.env")
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Europe/Kiev", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DBNAME"))
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	err = godotenv.Load(".dev.env")
+	if err != nil {
+		log.Fatalf("Variable environment not found")
+	}
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DriverName: "cloudsqlpostgres",
+		DSN:        fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=disable", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_DBNAME"), os.Getenv("POSTGRES_PASSWORD")),
+	}))
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -60,7 +65,6 @@ func main() {
 	e := echo.New()
 	e.Use(middlewares.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
 
 	e.Validator = &CustomValidator{validator: validator.New()}
 
@@ -68,15 +72,15 @@ func main() {
 
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 
-	api.GET("/data", handlers.GetProfileData, middlewares.CheckJWT("Authorization"))
+	api.GET("/data", user.GetProfileData, middlewares.CheckJWT("Authorization"))
 
-	api.PUT("/update", handlers.UpdateProfile, middlewares.CheckJWT("Authorization"))
+	api.PUT("/update", user.UpdateProfile, middlewares.CheckJWT("Authorization"))
 
-	api.GET("/reauth", handlers.ReAuth, middlewares.CheckJWT("Refresh"))
+	api.GET("/refresh", user.Refresh, middlewares.CheckJWT("Refresh"))
 
-	api.POST("/login", handlers.LoginIntoProfile)
+	api.POST("/login", user.Login)
 
-	api.POST("/register", handlers.RegisterProfile)
+	api.POST("/register", user.Register)
 
 	go func() {
 		err := e.Start(":9000")
