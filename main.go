@@ -50,10 +50,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Variable environment not found")
 	}
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		DriverName: "cloudsqlpostgres",
-		DSN:        fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=disable", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_DBNAME"), os.Getenv("POSTGRES_PASSWORD")),
-	}))
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s user=%s dbname=%s password=%s sslmode=disable", os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_DBNAME"), os.Getenv("POSTGRES_PASSWORD"))))
 
 	if err != nil {
 		fmt.Print(err.Error())
